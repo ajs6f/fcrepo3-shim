@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject VERSION="1.1" PID="si:3847"
+xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
+<foxml:objectProperties>
+<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="SI_Islandora_Architecture"/>
+<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="sternb"/>
+<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2016-01-21T17:01:30.397Z"/>
+<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2016-01-21T17:01:40.196Z"/>
+</foxml:objectProperties>
+<foxml:datastream ID="AUDIT" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+<foxml:datastreamVersion ID="AUDIT.0" LABEL="Audit Trail for this object" CREATED="2016-01-21T17:01:30.397Z" MIMETYPE="text/xml" FORMAT_URI="info:fedora/fedora-system:format/xml.fedora.audit">
+<foxml:xmlContent>
+<audit:auditTrail xmlns:audit="info:fedora/fedora-system:def/audit#">
+<audit:record ID="AUDREC1">
+<audit:process type="Fedora API-M"/>
+<audit:action>addDatastream</audit:action>
+<audit:componentID>SIDORA</audit:componentID>
+<audit:responsibility>sternb</audit:responsibility>
+<audit:date>2016-01-21T17:01:33.683Z</audit:date>
+<audit:justification>Copied datastream from si:3847.</audit:justification>
+</audit:record>
+<audit:record ID="AUDREC2">
+<audit:process type="Fedora API-M"/>
+<audit:action>addDatastream</audit:action>
+<audit:componentID>OBJ</audit:componentID>
+<audit:responsibility>sternb</audit:responsibility>
+<audit:date>2016-01-21T17:01:38.881Z</audit:date>
+<audit:justification>Copied datastream from si:3847.</audit:justification>
+</audit:record>
+<audit:record ID="AUDREC3">
+<audit:process type="Fedora API-M"/>
+<audit:action>addDatastream</audit:action>
+<audit:componentID>TN</audit:componentID>
+<audit:responsibility>camelProcess</audit:responsibility>
+<audit:date>2016-01-21T17:01:39.923Z</audit:date>
+<audit:justification></audit:justification>
+</audit:record>
+<audit:record ID="AUDREC4">
+<audit:process type="Fedora API-M"/>
+<audit:action>addDatastream</audit:action>
+<audit:componentID>OBJ.swf</audit:componentID>
+<audit:responsibility>camelProcess</audit:responsibility>
+<audit:date>2016-01-21T17:01:40.196Z</audit:date>
+<audit:justification></audit:justification>
+</audit:record>
+</audit:auditTrail>
+</foxml:xmlContent>
+</foxml:datastreamVersion>
+</foxml:datastream>
+<foxml:datastream ID="RELS-EXT" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+<foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Fedora Object to Object Relationship Metadata." CREATED="2016-01-21T17:01:30.397Z" MIMETYPE="application/rdf+xml" FORMAT_URI="info:fedora/fedora-system:FedoraRELSExt-1.0" SIZE="1066">
+<foxml:xmlContent>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:fedora-model="info:fedora/fedora-system:def/model#" xmlns:islandora="http://islandora.ca/ontology/relsext#">
+  <rdf:Description rdf:about="info:fedora/si:3847">
+    <fedora-model:hasModel rdf:resource="info:fedora/si:resourceCModel"></fedora-model:hasModel>
+    <fedora-model:hasModel rdf:resource="info:fedora/si:fieldbookCModel"></fedora-model:hasModel>
+    <islandora:inheritXacmlFrom rdf:resource="info:fedora/si:3780"></islandora:inheritXacmlFrom>
+    <islandora:isViewableByUser>fedoraAdmin</islandora:isViewableByUser>
+    <islandora:isViewableByUser>sternb</islandora:isViewableByUser>
+    <islandora:isViewableByRole>administrator</islandora:isViewableByRole>
+    <islandora:isManageableByUser>fedoraAdmin</islandora:isManageableByUser>
+    <islandora:isManageableByUser>sternb</islandora:isManageableByUser>
+    <islandora:isManageableByRole>administrator</islandora:isManageableByRole>
+  </rdf:Description>
+</rdf:RDF>
+</foxml:xmlContent>
+</foxml:datastreamVersion>
+</foxml:datastream>
+<foxml:datastream ID="MODS" STATE="A" CONTROL_GROUP="M" VERSIONABLE="true">
+<foxml:datastreamVersion ID="MODS.0" LABEL="MODS Record" CREATED="2016-01-21T17:01:30.397Z" MIMETYPE="text/xml" SIZE="1683">
+<foxml:binaryContent> 
+              PD94bWwgdmVyc2lvbj0iMS4wIj8+Cjxtb2RzIHhtbG5zPSJodHRwOi8vd3d3LmxvYy5nb3YvbW9kcy92
+              MyIgeG1sbnM6bW9kcz0iaHR0cDovL3d3dy5sb2MuZ292L21vZHMvdjMiIHhtbG5zOnhzaT0iaHR0cDov
+              L3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3
+              LnczLm9yZy8xOTk5L3hsaW5rIj4KICA8dGl0bGVJbmZvPjx0aXRsZT5TSV9Jc2xhbmRvcmFfQXJjaGl0
+              ZWN0dXJlPC90aXRsZT48c3ViVGl0bGU+c3ViLXRpdGxlPC9zdWJUaXRsZT48L3RpdGxlSW5mbz4KICA8
+              bmFtZSB0eXBlPSJwZXJzb25hbCI+PG5hbWVQYXJ0PmJldGg8L25hbWVQYXJ0Pjxyb2xlPjxyb2xlVGVy
+              bSBhdXRob3JpdHk9Im1hcmNyZWxhdG9yIiB0eXBlPSJ0ZXh0Ij5jcmVhdG9yPC9yb2xlVGVybT48L3Jv
+              bGU+PC9uYW1lPgogIDxuYW1lIHR5cGU9ImNvcnBvcmF0ZSI+PG5hbWVQYXJ0PnNpPC9uYW1lUGFydD48
+              cm9sZT48cm9sZVRlcm0gYXV0aG9yaXR5PSJtYXJjcmVsYXRvciIgdHlwZT0idGV4dCI+b3duZXI8L3Jv
+              bGVUZXJtPjwvcm9sZT48L25hbWU+CiAgPHR5cGVPZlJlc291cmNlPnRleHQ8L3R5cGVPZlJlc291cmNl
+              PgogIDxnZW5yZSBhdXRob3JpdHk9ImxjdGdtIj5hcmNoaXRlY3R1cmU8L2dlbnJlPgogIDxvcmlnaW5J
+              bmZvPjxkYXRlSXNzdWVkPjAxMjEyMDE2PC9kYXRlSXNzdWVkPjxwdWJsaXNoZXI+VVBFSTwvcHVibGlz
+              aGVyPjxwbGFjZT48cGxhY2VUZXJtIGF1dGhvcml0eT0ibWFyY2NvdW50cnkiIHR5cGU9ImNvZGUiPmNh
+              bmFkYTwvcGxhY2VUZXJtPjwvcGxhY2U+PHBsYWNlPjxwbGFjZVRlcm0gdHlwZT0idGV4dCI+UEVJPC9w
+              bGFjZVRlcm0+PC9wbGFjZT48L29yaWdpbkluZm8+CiAgPGxhbmd1YWdlPgogICAgPGxhbmd1YWdlVGVy
+              bSBhdXRob3JpdHk9ImlzbzYzOS0yYiIgdHlwZT0iY29kZSI+ZW5nbGlzaDwvbGFuZ3VhZ2VUZXJtPgog
+              IDwvbGFuZ3VhZ2U+CiAgPGFic3RyYWN0PmlzbGFuZG9yYSBoaWdoIGxldmVsIGFyY2hpdGVjdHVyZTwv
+              YWJzdHJhY3Q+CiAgPGlkZW50aWZpZXIgdHlwZT0ibG9jYWwiPjEyMzQ1PC9pZGVudGlmaWVyPgogIDxw
+              aHlzaWNhbERlc2NyaXB0aW9uPjxmb3JtIGF1dGhvcml0eT0ibWFyY2Zvcm0iPnRleHQ8L2Zvcm0+PGV4
+              dGVudD5vbmUgcGFnZTwvZXh0ZW50PjwvcGh5c2ljYWxEZXNjcmlwdGlvbj4KICA8bm90ZT5ub3Rlczwv
+              bm90ZT4KICA8c3ViamVjdD48dG9waWM+SExBPC90b3BpYz48dG9waWM+dGVjaG5pY2FsIGFyY2hpdGVj
+              dHVyZTwvdG9waWM+PGdlb2dyYXBoaWM+VVBFSTwvZ2VvZ3JhcGhpYz48Z2VvZ3JhcGhpYz5jYW5hZGE8
+              L2dlb2dyYXBoaWM+PHRlbXBvcmFsPjIwMTE8L3RlbXBvcmFsPjxoaWVyYXJjaGljYWxHZW9ncmFwaGlj
+              Pjxjb250aW5lbnQ+Tm9ydGggQW1lcmljYTwvY29udGluZW50Pjxjb3VudHJ5PmNhbmFkYTwvY291bnRy
+              eT48cHJvdmluY2U+bm92YSBzY290aWE8L3Byb3ZpbmNlPjxyZWdpb24+UEVJPC9yZWdpb24+PGNvdW50
+              eT5jaGFybG90dGV0b3duPC9jb3VudHk+PGNpdHk+Y2hhcmxvdHRldG93bjwvY2l0eT48Y2l0eVNlY3Rp
+              b24+VVBFSTwvY2l0eVNlY3Rpb24+PC9oaWVyYXJjaGljYWxHZW9ncmFwaGljPjxjYXJ0b2dyYXBoaWNz
+              Pjxjb29yZGluYXRlcz4xPC9jb29yZGluYXRlcz48L2NhcnRvZ3JhcGhpY3M+PC9zdWJqZWN0Pgo8L21v
+              ZHM+
+</foxml:binaryContent> 
+</foxml:datastreamVersion>
+</foxml:datastream>
+<foxml:datastream ID="DC" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+<foxml:datastreamVersion ID="DC.0" LABEL="DC Record" CREATED="2016-01-21T17:01:30.397Z" MIMETYPE="text/xml" SIZE="1209">
+<foxml:xmlContent>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+  <dc:title>SI_Islandora_Architecture: sub-title</dc:title>
+  <dc:creator>beth</dc:creator>
+  <dc:subject>HLA--technical architecture</dc:subject>
+  <dc:subject>HLA--technical architecture--UPEI--canada--2011</dc:subject>
+  <dc:description>islandora high level architecture</dc:description>
+  <dc:description>notes</dc:description>
+  <dc:publisher>UPEI</dc:publisher>
+  <dc:contributor>si (owner)</dc:contributor>
+  <dc:date>01212016</dc:date>
+  <dc:type>Text</dc:type>
+  <dc:type>architecture</dc:type>
+  <dc:format>text</dc:format>
+  <dc:format>one page</dc:format>
+  <dc:identifier>si:3847</dc:identifier>
+  <dc:identifier>local: 12345</dc:identifier>
+  <dc:language>english</dc:language>
+  <dc:coverage>UPEI</dc:coverage>
+  <dc:coverage>canada</dc:coverage>
+  <dc:coverage>North America--canada--PEI--charlottetown--charlottetown</dc:coverage>
+  <dc:coverage>1</dc:coverage>
+  <dc:coverage>2011</dc:coverage>
+</oai_dc:dc>
+</foxml:xmlContent>
+</foxml:datastreamVersion>
+
+
+
+</foxml:digitalObject>
