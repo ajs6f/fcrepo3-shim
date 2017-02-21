@@ -1,0 +1,3 @@
+stream=on&type=triples&format=N-triples&lang=sparql&query=
+
+${body}
