@@ -2,11 +2,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.fcrepo.camel</groupId>
+    <groupId>edu.si</groupId>
     <artifactId>fcrepo3-shim</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>integration-tests</artifactId>
   <packaging>bundle</packaging>
 
@@ -14,15 +14,16 @@
     <servlet.port>8080</servlet.port>
     <fedora.home>${project.build.directory}/fedora-home</fedora.home>
     <fuseki.base>${project.build.directory}/fuseki-base</fuseki.base>
+    <pax.version>4.8.0</pax.version>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.fcrepo.camel</groupId>
       <artifactId>fcrepo3-shim-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
     <!-- testing -->
     <dependency>
       <groupId>edu.si.trippi</groupId>
@@ -49,18 +50,21 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
+      <version>${camel.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-junit4</artifactId>
       <scope>test</scope>
+      <version>${pax.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-container-karaf</artifactId>
       <scope>test</scope>
+      <version>${pax.version}</version>
     </dependency>
 
     <dependency>
@@ -79,8 +83,7 @@
   </dependencies>
 
   <build>
-  
-  
+
     <testResources>
       <testResource>
         <directory>${basedir}/src/test/resources/fedora-home</directory>
@@ -95,27 +98,36 @@
         <targetPath>${fuseki.base}</targetPath>
       </testResource>
     </testResources>
-    
+
     <plugins>
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
       </plugin>
-      
+
       <!-- reserve network ports for integration testing -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <configuration>
-          <portNames>
-            <portName>dynamic.test.port</portName>
-          </portNames>
-        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>reserve-network-port</goal>
+            </goals>
+            <configuration>
+              <portNames>
+                <portName>dynamic.test.port</portName>
+              </portNames>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
-      
+
+
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.18.1</version>
         <configuration>
           <argLine>${jacoco.agent.it.arg}</argLine>
           <systemPropertyVariables>
@@ -123,11 +135,20 @@
             <buildDirectory>${project.build.directory}</buildDirectory>
           </systemPropertyVariables>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
+        <version>1.6.2</version>
         <configuration>
           <container>
             <containerId>tomcat8x</containerId>
@@ -141,7 +162,7 @@
             <properties>
               <cargo.servlet.uriencoding>UTF-8</cargo.servlet.uriencoding>
               <cargo.jvmargs>-Xmx512m</cargo.jvmargs>
-              <cargo.logging>low</cargo.logging>
+              <cargo.logging>high</cargo.logging>
               <cargo.servlet.port>${dynamic.test.port}</cargo.servlet.port>
             </properties>
           </configuration>
@@ -171,18 +192,17 @@
               <goal>start</goal>
             </goals>
           </execution>
-
           <execution>
             <id>stop</id>
             <phase>post-integration-test</phase>
             <goals>
-              <!-- <goal>stop</goal> -->
+              <goal>stop</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
 
-      <!-- to use versionAsInProject() -->
+      <!-- to use versionAsInProject() for Pax Exam provisioning -->
       <plugin>
         <groupId>org.apache.servicemix.tooling</groupId>
         <artifactId>depends-maven-plugin</artifactId>

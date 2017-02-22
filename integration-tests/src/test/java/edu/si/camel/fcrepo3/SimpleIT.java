@@ -1,4 +1,4 @@
-package org.fcrepo.camel.fcrepo3;
+package edu.si.camel.fcrepo3;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
@@ -69,7 +69,8 @@ public class SimpleIT extends CamelTestSupport {
                 keepRuntimeFolder(),
                 configureConsole().ignoreRemoteShell().ignoreLocalConsole(), features(karafStandardRepo, "standard", "webconsole"), features(jenaRepo, "jena"),
                 features(camelRepo, "camel-core", "camel-test-karaf"),
-                mavenBundle().groupId("org.fcrepo.camel").artifactId("fcrepo3-shim-core").versionAsInProject().start() 
+                mavenBundle().groupId("org.fcrepo.camel").artifactId("fcrepo3-shim-core").versionAsInProject().start() ,
+                mavenBundle().groupId("uk.org.lidalia").artifactId("sysout-over-slf4j").versionAsInProject().start()
     //    editConfigurationFilePut(configurationPointer, value)        
         };
     }

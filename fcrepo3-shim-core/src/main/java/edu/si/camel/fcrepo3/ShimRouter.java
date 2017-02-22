@@ -1,4 +1,4 @@
-package org.fcrepo.camel.fcrepo3;
+package edu.si.camel.fcrepo3;
 
 import static java.lang.String.join;
 import static java.util.Arrays.stream;
