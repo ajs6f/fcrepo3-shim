@@ -74,26 +74,31 @@ public class ShimRouter extends RouteBuilder implements Vocabulary {
 
     @Override
     public void configure() {
+        getContext().setTracing(true);
+        deadLetterChannel("log:shim.error");
+
         final Namespaces ns = new Namespaces("rdf", RDF);
         ns.add("ldp", LDP);
         ns.add("fedora-system", SYSTEM_NS);
         ns.add("fedora-view", VIEW_NS);
         ns.add("fedora-model", MODEL_NS);
 
-        from("direct:sparql").setHeader("Content-Type").constant("application/x-www-form-urlencoded")
+        from("direct:sparql").streamCaching().to("log:shim.sparql").setHeader("Content-Type").constant("application/x-www-form-urlencoded")
                         .setHeader("CamelHttpChunked").constant(false).setHeader("CamelHttpMethod").constant("POST")
-                        .to("velocity:sparql/package.vm").to("http://{{fcrepo3}}/risearch?httpClient.soTimeout=6000")
+                        .to("velocity:sparql/package.vm").to("log:shim.sparql.packaged").to("http://{{fcrepo3}}/risearch?httpClient.soTimeout=6000")
+                        .to("log:shim.sparql.result")
                         .removeHeader("Content-Type").removeHeader("CamelHttpChunked").removeHeader("CamelHttpMethod");
 
-        // binary content
-        rest("/shim").get("/{Fcrepo3Pid}/{Fcrepo3DatastreamId}")
+        rest("/shim").to("log:shim")
+
+                        .get("/{Fcrepo3Pid}/models").to("log:shim.models").produces(NTRIPLES_MIMETYPE)
+                        .to("velocity:sparql/getcontentmodels.vm").to("log:shim.models.getmodels").to("direct:sparql")
+
+                        .get("/{Fcrepo3Pid}/{Fcrepo3DatastreamId}")
                         .to("http://{{fcrepo3}}/objects/{{Fcrepo3Pid}}/datastreams/{{Fcrepo3DatastreamId}}")
 
                         // object RDF
                         .get("/{Fcrepo3Pid}").produces(NTRIPLES_MIMETYPE).to("direct:rdf.object")
-
-                        .get("/{Fcrepo3Pid}/models").produces(NTRIPLES_MIMETYPE)
-                        .to("velocity:sparql/getcontentmodels.vm").to("direct:sparql")
 
                         // datastream RDF
                         .get("/{Fcrepo3Pid}/datastreams/{{Fcrepo3DsId}}").produces(NTRIPLES_MIMETYPE)

@@ -3,13 +3,14 @@
 @prefix ja:<http://jena.hpl.hp.com/2005/11/Assembler#> .
 
 ## Updatable in-memory dataset for Fedora Commmons tests.
-<#fedora3> rdf:type :Service;
+## connected asynchronously to prove -camel-toolkit operation
+<#fedora3async> rdf:type :Service;
 # URI of the dataset -- http://host:port/ds
-	:name "fedora3";
+	:name "fedora3async";
 	:serviceQuery "query";
 	:serviceUpdate "update";
 	:serviceReadGraphStore "get";
 	:dataset <#dataset>; .
 
 ## In-memory, initially empty.
-<#dataset> rdf:type ja:RDFDataset .
+<#dataset> rdf:type ja:DatasetTxnMem .

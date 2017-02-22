@@ -22,12 +22,10 @@
   </appender>
   <logger name="org.fcrepo" additivity="false" level="INFO">
     <appender-ref ref="FEDORA"/>
-    <appender-ref ref="STDOUT"/>
   </logger>
 
-  <logger name="edu.si.trippi" additivity="false" level="INFO">
+  <logger name="edu.si.trippi" additivity="false" level="DEBUG">
     <appender-ref ref="FEDORA"/>
-    <appender-ref ref="STDOUT"/>
   </logger>
 
   <logger name="org.mulgara" additivity="false" level="WARN">
