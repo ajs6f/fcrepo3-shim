@@ -2,6 +2,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <prerequisites>
+    <maven>3.3.3</maven>
+  </prerequisites>
+
   <groupId>edu.si</groupId>
   <artifactId>fcrepo3-shim</artifactId>
   <version>0.0.1-SNAPSHOT</version>
@@ -10,11 +14,12 @@
   <description>Presents Fedora 3 objects as Fedora 4 resources</description>
 
   <properties>
-    <trippi-sparql.version>1.1-SNAPSHOT</trippi-sparql.version>
-    <fuseki.version>2.4.1</fuseki.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <trippi-sparql.version>1.0</trippi-sparql.version>
     <jena.version>3.2.0</jena.version>
     <url.version>2.5.2</url.version>
-    <camel.version>2.17.3</camel.version>
+    <camel.version>2.18.2</camel.version>
   </properties>
 
   <modules>
@@ -43,11 +48,26 @@
 
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.2</version>
+        <version>3.5.1</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
         </configuration>
+      </plugin>
+
+      <!-- to use versionAsInProject() for Pax Exam provisioning -->
+      <plugin>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>maven-paxexam-plugin</artifactId>
+        <version>1.2.4</version>
+        <executions>
+          <execution>
+            <id>generate-config</id>
+            <goals>
+              <goal>generate-depends-file</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

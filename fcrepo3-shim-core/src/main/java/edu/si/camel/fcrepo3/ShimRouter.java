@@ -3,21 +3,16 @@ package edu.si.camel.fcrepo3;
 import static java.lang.String.join;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
-import static javax.xml.parsers.SAXParserFactory.newInstance;
 import static org.apache.jena.riot.Lang.NTRIPLES;
 import static org.apache.jena.riot.Lang.RDFXML;
 import static org.apache.jena.riot.RDFDataMgr.parse;
 import static org.apache.jena.riot.system.StreamRDFLib.writer;
 import static org.slf4j.LoggerFactory.getLogger;
-import static uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J.sendSystemOutAndErrToSLF4J;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.stream.Stream;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,25 +20,12 @@ import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.jena.atlas.RuntimeIOException;
 import org.slf4j.Logger;
-import org.xml.sax.SAXException;
 
 public class ShimRouter extends RouteBuilder implements Vocabulary {
 
     private static final String NTRIPLES_MIMETYPE = NTRIPLES.getContentType().toString();
 
     private static final Logger log = getLogger(ShimRouter.class);
-
-    private static final SAXParserFactory saxFactory = newInstance();
-    static {
-        sendSystemOutAndErrToSLF4J();
-        try {
-            saxFactory.setFeature("http://xml.org/sax/features/xmlns-uris", true);
-            saxFactory.setNamespaceAware(true);
-            saxFactory.setValidating(false);
-            saxFactory.setXIncludeAware(false);
-            saxFactory.setSchema(null);
-        } catch (SAXException | ParserConfigurationException e) { /* NO OP */ }
-    }
 
     private static final AggregationStrategy MERGE_TRIPLES = (Exchange oldRdf, Exchange newRdf) -> {
         if (newRdf == null) return oldRdf;

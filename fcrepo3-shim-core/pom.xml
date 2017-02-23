@@ -27,13 +27,6 @@
       <version>${jena.version}</version>
     </dependency>
 
-    <!-- deal with https://issues.apache.org/jira/browse/XERCESJ-1654 -->
-    <dependency>
-      <groupId>uk.org.lidalia</groupId>
-      <artifactId>sysout-over-slf4j</artifactId>
-      <version>1.0.2</version>
-    </dependency>
-
   </dependencies>
 
   <build>
