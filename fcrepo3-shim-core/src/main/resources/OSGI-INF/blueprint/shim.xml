@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+       http://www.osgi.org/xmlns/blueprint/v1.0.0 blueprint.xsd
+       http://camel.apache.org/schema/blueprint camel-blueprint.xsd">
+
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+    <restConfiguration component="restlet" port="9191"/>
+
+    <rest path="/shim">
+
+      <get uri="/{Fcrepo3Pid}/models" produces="application/n-triples">
+        <route>
+          <to uri="log:shim.models"/>
+          <to uri="velocity:sparql/getcontentmodels.vm"/>
+          <to uri="log:shim.models.getmodels"/>
+          <to uri="direct:sparql"/>
+        </route>
+      </get>
+    </rest>
+
+    <route>
+      <from uri="direct:sparql"/>
+      <to uri="log:shim.sparql"/>
+      <setHeader headerName="Content-Type">
+        <constant>application/x-www-form-urlencoded</constant>
+      </setHeader>
+      <setHeader headerName="CamelHttpChunked">
+        <constant>false</constant>
+      </setHeader>
+      <setHeader headerName="CamelHttpMethod">
+        <constant>POST</constant>
+      </setHeader>
+      <setHeader headerName="CamelHttpUri">
+        <constant>http://localhost:8080/fedora/risearch</constant>
+      </setHeader>
+      <to uri="velocity:sparql/package.vm"/>
+      <to uri="log:shim.sparql.packaged"/>
+      <to uri="http4://dummy?authUsername=fedoraAdmin&amp;authPassword=fedoraAdmin"/>
+      <to uri="log:shim.sparql.result"/>
+      <removeHeader headerName="CamelHttpMethod"/>
+      <removeHeader headerName="CamelHttpChunked"/>
+      <removeHeader headerName="Content-Type"/>
+      <log message="Moving ${file:name} to the output directory"/>
+    </route>
+
+
+  </camelContext>
+
+</blueprint>
