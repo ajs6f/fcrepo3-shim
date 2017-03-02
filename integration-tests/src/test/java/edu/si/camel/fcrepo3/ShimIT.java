@@ -8,7 +8,7 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfi
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
-
+import javax.inject.Inject ;
 import java.io.File;
 
 import org.apache.camel.CamelContext;
@@ -22,13 +22,20 @@ import org.ops4j.pax.exam.karaf.options.KarafFeaturesOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.MavenUrlReference;
+import org.osgi.framework.BundleContext;
 
 public abstract class ShimIT extends CamelKarafTestSupport {
+    
+    @Inject
+    protected BundleContext bundleContext;
 
     protected static final String TEST_FEDORA = System.getProperty("dynamic.test.port", "8080") + "/fedora";
     protected static final String BUILD_DIRECTORY = System.getProperty("buildDirectory");
     protected static final String CAMEL_VERSION = "2.18.2";
-    private static String KARAF_VERSION = "4.0.7";
+    private static final String KARAF_VERSION = "4.1.0";
+    private static final String TOMCAT_URI = "http://localhost:" + System.getProperty("dynamic.test.port", "8080");
+    protected static final String FEDORA_URI = TOMCAT_URI + "/trippi-sparql-fcrepo-webapp";
+    protected static final String FUSEKI_URI = TOMCAT_URI + "/jena-fuseki-war/fedora3";
 
     @Override
     protected CamelContext createCamelContext() {
@@ -39,29 +46,22 @@ public abstract class ShimIT extends CamelKarafTestSupport {
     public Option[] config() {
         MavenUrlReference camelRepo = maven().groupId("org.apache.camel.karaf").artifactId("apache-camel")
                         .classifier("features").type("xml").version(CAMEL_VERSION);
-        MavenUrlReference jenaRepo = maven().groupId("org.apache.jena").artifactId("jena-osgi-features")
-                        .classifier("features").type("xml").version("3.2.0");
-        MavenUrlReference enterpriseRepo = maven().groupId("org.apache.karaf.features").artifactId("enterprise")
-                        .classifier("features").type("xml").version("4.0.7");
 
-        MavenArtifactProvisionOption shim = mavenBundle().groupId("edu.si").artifactId("fcrepo3-shim-core")
-                        .version("0.0.1-SNAPSHOT").start();
-        MavenArtifactProvisionOption camelOsgi = mavenBundle().groupId("org.apache.camel").artifactId("camel-core-osgi")
-                        .version(CAMEL_VERSION).start();
+        MavenUrlReference fcrepoShim = maven().groupId("edu.si").artifactId("fcrepo3-shim-core").classifier("features")
+                        .type("xml").version("0.0.1-SNAPSHOT");
 
-        KarafFeaturesOption jndi = features(enterpriseRepo, "jndi");
-        KarafFeaturesOption jena = features(jenaRepo, "jena");
-
-        KarafFeaturesOption camel = features(camelRepo, "camel");
         KarafFeaturesOption camelTest = features(camelRepo, "camel-test");
+        KarafFeaturesOption shim = features(fcrepoShim, "fcrepo3-shim-core");
+
         // install camel-test-karaf as bundle (not feature as the feature causes a bundle refresh that
         // invalidates the @Inject bundleContext)
         MavenArtifactProvisionOption camelTestKaraf = mavenBundle().groupId("org.apache.camel")
                         .artifactId("camel-test-karaf").version(CAMEL_VERSION);
 
-        KarafFeaturesOption camelSparkRest = features(camelRepo, "camel-spark-rest");
+        MavenArtifactProvisionOption camelCoreOsgi = mavenBundle().groupId("org.apache.camel")
+                        .artifactId("camel-core-osgi").version(CAMEL_VERSION);
 
-        Option[] options = new Option[] {
+         Option[] options = new Option[] {
                 // for remote debugging
                 // org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
                 // org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
@@ -99,12 +99,12 @@ public abstract class ShimIT extends CamelKarafTestSupport {
                 // install junit
                 CoreOptions.junitBundles(),
 
-                // install camel 
-                jndi, camel, camelTest, camelTestKaraf, camelOsgi, camelSparkRest,
-                //jena
-                jena,
+                CoreOptions.systemProperty("fcrepo3.uri").value(FEDORA_URI),
+
+                // install camel
+                camelTest, camelTestKaraf,
                 // and the shim itself
-                shim };
+                shim, camelCoreOsgi };
 
         return options;
     }

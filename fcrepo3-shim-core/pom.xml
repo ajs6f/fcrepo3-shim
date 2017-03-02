@@ -53,20 +53,19 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>src/main/cfg/edu.si.camel.fcrepo3.fcrepo3-shim.cfg</file>
+                  <file>src/main/cfg/edu.si.fcrepo3-shim.cfg</file>
                   <type>cfg</type>
                   <classifier>configuration</classifier>
+                </artifact>
+                <artifact>
+                  <file>${project.basedir}/src/main/resources/features.xml</file>
+                  <type>xml</type>
+                  <classifier>features</classifier>
                 </artifact>
               </artifacts>
             </configuration>
           </execution>
         </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.karaf.tooling</groupId>
-        <artifactId>karaf-maven-plugin</artifactId>
-        <version>4.0.7</version>
       </plugin>
 
     </plugins>

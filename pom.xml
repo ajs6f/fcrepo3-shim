@@ -19,7 +19,7 @@
     <trippi-sparql.version>1.0</trippi-sparql.version>
     <jena.version>3.2.0</jena.version>
     <url.version>2.5.2</url.version>
-    <camel.version>2.16.4</camel.version>
+    <camel.version>2.18.2</camel.version>
   </properties>
 
   <modules>
@@ -59,10 +59,7 @@
   
   <profiles>
     <profile>
-      <id>default</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
+      <id>no-tests</id>
       <modules>
         <module>fcrepo3-shim-core</module>
       </modules>

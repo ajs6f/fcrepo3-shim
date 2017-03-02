@@ -1,7 +1,8 @@
 PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
 
-CONSTRUCT { <info:fedora/${headers.Fcrepo3Pid}> <fedora-model:hasModel> ?model . }
+CONSTRUCT { <info:fedora/${headers.Fcrepo3Pid}> fedora-model:hasModel ?model . }
+FROM <#ri>
 WHERE
 {
-  <info:fedora/${headers.Fcrepo3Pid}> <fedora-model:hasModel> ?model .
+  <info:fedora/${headers.Fcrepo3Pid}> fedora-model:hasModel ?model .
 } 

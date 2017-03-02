@@ -24,6 +24,13 @@
       <artifactId>fcrepo3-shim-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.apache.jena</groupId>
+      <artifactId>jena-rdfconnection</artifactId>
+      <version>${jena.version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <!-- testing -->
     <dependency>
@@ -70,13 +77,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <version>6.0.0</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -85,8 +85,7 @@
       <testResource>
         <directory>${basedir}/src/test/resources/fedora-home</directory>
         <targetPath>${fedora.home}</targetPath>
-        <!-- we filter in order to insert the appropriate container port 
-          into the Trippi :: SPARQL configuration in fedora.fcfg -->
+        <!-- we filter in order to insert the appropriate container port into the Trippi :: SPARQL configuration in fedora.fcfg -->
         <filtering>true</filtering>
       </testResource>
 
@@ -107,16 +106,19 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+        <configuration>
+          <portNames>
+            <portName>dynamic.test.port</portName>
+          </portNames>
+        </configuration>
         <executions>
           <execution>
+            <!-- we choose this phase to ensure that the chosen port number is available for test resource filtering, specifically 
+              into fedora.fcfg -->
+            <phase>process-test-sources</phase>
             <goals>
               <goal>reserve-network-port</goal>
             </goals>
-            <configuration>
-              <portNames>
-                <portName>dynamic.test.port</portName>
-              </portNames>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -134,6 +136,7 @@
         </configuration>
         <executions>
           <execution>
+            <id>integration-test</id>
             <goals>
               <goal>integration-test</goal>
               <goal>verify</goal>
@@ -164,10 +167,11 @@
               <cargo.jvmargs>-Xmx512m</cargo.jvmargs>
               <cargo.logging>high</cargo.logging>
               <cargo.servlet.port>${dynamic.test.port}</cargo.servlet.port>
+              <!-- fire AJP into /dev/null -->
+              <cargo.tomcat.ajp.port>0</cargo.tomcat.ajp.port>
             </properties>
           </configuration>
-          <deployer><!-- empty deployer element prevents Cargo from trying 
-              to deploy shim, which is a bundle, into Tomcat -->
+          <deployer><!-- empty deployer element prevents Cargo from trying to deploy shim, which is a bundle, into Tomcat -->
           </deployer>
           <deployables>
             <deployable>

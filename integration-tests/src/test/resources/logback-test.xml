@@ -6,10 +6,11 @@
             <pattern>%p %d{HH:mm:ss.SSS} \(%c{0}\) %m%n</pattern>
         </encoder>
     </appender>
-
-    <logger name="edu.si.trippi.impl" additivity="false" level="${testLogLevel:DEBUG}">
+    
+    <logger name="edu.si" additivity="false" level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </logger>
+
     <logger name="org.apache.http" additivity="false" level="WARN">
         <appender-ref ref="STDOUT"/>
     </logger>
