@@ -15,7 +15,7 @@
     <fedora.home>${project.build.directory}/fedora-home</fedora.home>
     <fuseki.base>${project.build.directory}/fuseki-base</fuseki.base>
     <fuseki.version>2.5.0</fuseki.version>
-    <pax.version>4.10.0</pax.version>
+    <tinybundles.version>2.1.1</tinybundles.version>
   </properties>
 
   <dependencies>
@@ -24,15 +24,14 @@
       <artifactId>fcrepo3-shim-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
     <dependency>
-      <groupId>org.apache.jena</groupId>
-      <artifactId>jena-rdfconnection</artifactId>
-      <version>${jena.version}</version>
+      <groupId>org.ops4j.pax.tinybundles</groupId>
+      <artifactId>tinybundles</artifactId>
+      <version>${tinybundles.version}</version>
       <scope>test</scope>
     </dependency>
 
-    <!-- testing -->
     <dependency>
       <groupId>edu.si.trippi</groupId>
       <artifactId>trippi-sparql-fcrepo-webapp</artifactId>
@@ -68,6 +67,16 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-karaf</artifactId>
       <version>${camel.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.karaf</groupId>
+          <artifactId>org.apache.karaf.client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ops4j.pax.logging</groupId>
+          <artifactId>pax-logging-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -77,11 +86,23 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.1.7</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
 
     <testResources>
+      <testResource>
+        <directory>${basedir}/src/test/resources/answers</directory>
+        <targetPath>${project.build.directory}/answers</targetPath>
+      </testResource>
+
       <testResource>
         <directory>${basedir}/src/test/resources/fedora-home</directory>
         <targetPath>${fedora.home}</targetPath>
