@@ -1,0 +1,14 @@
+PREFIX fedora-view: <info:fedora/fedora-system:def/view#>
+PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
+PREFIX cm: <info:fedora/fedora-system:def/dsCompositeModel#>
+
+CONSTRUCT { <info:fedora/${headers.pid}> fedora-view:disseminates ?datastream . }
+
+FROM <#ri>
+
+WHERE {
+    <info:fedora/${headers.pid}> fedora-view:disseminates ?datastream .
+    <info:fedora/${headers.pid}> fedora-model:hasModel ?contentModel . 
+    ?contentModel cm:dsTypeModel ?dsID .
+    FILTER (STRENDS(STR(?datastream), ?dsID)) .
+}

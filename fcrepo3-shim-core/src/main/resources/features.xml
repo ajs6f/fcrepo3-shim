@@ -7,11 +7,14 @@
     
     <feature name="fcrepo3-shim-core" description="Fedora 3 Shim Core" version="0.0.1.SNAPSHOT">
         <details>Presents Fedora 3 objects as Fedora 4 resources</details>
-        <feature version="3.2.0">jena</feature>
+        <feature>jena</feature>
+        <feature>war</feature>
         <feature version="2.18.2">camel-blueprint</feature>
-        <feature version="2.18.2">camel-restlet</feature>
+        <feature version="2.18.2">camel-servlet</feature>
         <feature version="2.18.2">camel-velocity</feature>
         <feature version="2.18.2">camel-http4</feature>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/5.2_4</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/2.7.2_3</bundle>
         <bundle>mvn:edu.si/fcrepo3-shim-core</bundle>
     </feature>
 </features>

@@ -16,6 +16,8 @@
     <fuseki.base>${project.build.directory}/fuseki-base</fuseki.base>
     <fuseki.version>2.5.0</fuseki.version>
     <tinybundles.version>2.1.1</tinybundles.version>
+    <logback.version>1.1.7</logback.version>
+    <slf4j.version>1.7.20</slf4j.version>
   </properties>
 
   <dependencies>
@@ -23,6 +25,12 @@
       <groupId>org.fcrepo.camel</groupId>
       <artifactId>fcrepo3-shim-core</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -76,6 +84,10 @@
           <groupId>org.ops4j.pax.logging</groupId>
           <artifactId>pax-logging-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.ops4j.pax.logging</groupId>
+          <artifactId>pax-logging-service</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -84,13 +96,29 @@
       <artifactId>pax-url-aether</artifactId>
       <version>${url.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.1.7</version>
+      <version>${logback.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
     </dependency>
 
   </dependencies>
@@ -99,20 +127,9 @@
 
     <testResources>
       <testResource>
-        <directory>${basedir}/src/test/resources/answers</directory>
-        <targetPath>${project.build.directory}/answers</targetPath>
-      </testResource>
-
-      <testResource>
-        <directory>${basedir}/src/test/resources/fedora-home</directory>
-        <targetPath>${fedora.home}</targetPath>
-        <!-- we filter in order to insert the appropriate container port into the Trippi :: SPARQL configuration in fedora.fcfg -->
+        <directory>${basedir}/src/test/resources</directory>
+        <targetPath>${project.build.directory}</targetPath>
         <filtering>true</filtering>
-      </testResource>
-
-      <testResource>
-        <directory>${basedir}/src/test/resources/fuseki-base</directory>
-        <targetPath>${fuseki.base}</targetPath>
       </testResource>
     </testResources>
 
@@ -172,7 +189,7 @@
         <version>1.6.2</version>
         <configuration>
           <container>
-            <containerId>tomcat8x</containerId>
+            <containerId>tomcat7x</containerId>
             <type>embedded</type>
             <systemProperties>
               <FUSEKI_BASE>${fuseki.base}</FUSEKI_BASE>
@@ -184,6 +201,7 @@
           </container>
           <configuration>
             <properties>
+              <cargo.logging>high</cargo.logging>
               <cargo.servlet.uriencoding>UTF-8</cargo.servlet.uriencoding>
               <cargo.jvmargs>-Xmx512m</cargo.jvmargs>
               <cargo.logging>high</cargo.logging>

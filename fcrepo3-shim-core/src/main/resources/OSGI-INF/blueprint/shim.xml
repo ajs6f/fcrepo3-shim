@@ -1,65 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
   xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0"
   xsi:schemaLocation="
   http://www.osgi.org/xmlns/blueprint/v1.0.0 /Users/ajs6f/Documents/sidora/scratch/blueprint.xsd
   http://camel.apache.org/schema/blueprint https://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
 
   <!-- OSGI blueprint property placeholder -->
-  <ext:property-placeholder id="blueprint.placeholder">
-    <ext:default-properties>
-      <ext:property name="shim.port" value="9191"/>
-      <ext:property name="fcrepo3.uri" value="http://localhost:8080/fedora"/>
-    </ext:default-properties>
-  </ext:property-placeholder>
+  <cm:property-placeholder  persistent-id="edu.si.fcepo3.shim" update-strategy="reload">
+    <cm:default-properties>
+      <cm:property name="shim.port" value="8181"/>
+      <cm:property name="fcrepo3.uri" value="http://localhost:8080/trippi-sparql-fcrepo-webapp"/>
+    </cm:default-properties>
+  </cm:property-placeholder>
+  
+  <reference id="httpService" interface="org.osgi.service.http.HttpService"/>
+  
+  <bean class="org.apache.camel.component.servlet.osgi.OsgiServletRegisterer"
+    init-method="register" destroy-method="unregister">
+    <property name="alias" value="/shim"/>
+    <property name="httpService" ref="httpService"/>
+    <property name="servlet" ref="camelServlet"/>
+  </bean>
+  
+  <bean id="camelServlet" class="org.apache.camel.component.servlet.CamelHttpTransportServlet"/>
+  
+  <bean class="edu.si.fcrepo3.ShimRouter" id="shimRouter"/>
 
-  <camelContext xmlns="http://camel.apache.org/schema/blueprint" streamCache="true">
-
-    <!-- TODO for diagnostics only -->
-    <streamCaching id="myCacheConfig" bufferSize="16384" spoolDirectory="/tmp/cachedir"
-      spoolThreshold="1"/>
-
-    <restConfiguration component="restlet" port="{{shim.port}}"/>
-
-    <rest path="/shim">
-
-      <get uri="/{Fcrepo3Pid}/models">
-        <route>
-          <to uri="log:shim.models"/>
-          <to uri="velocity:sparql/getcontentmodels.vm"/>
-          <to uri="log:shim.models.getmodels"/>
-          <to uri="direct:sparql"/>
-        </route>
-      </get>
-    </rest>
-
-    <route>
-      <from uri="direct:sparql"/>
-      <to uri="log:shim.sparql"/>
-      <setHeader headerName="Content-Type">
-        <constant>application/x-www-form-urlencoded</constant>
-      </setHeader>
-      <setHeader headerName="CamelHttpChunked">
-        <constant>false</constant>
-      </setHeader>
-      <setHeader headerName="CamelHttpMethod">
-        <constant>POST</constant>
-      </setHeader>
-      <setHeader headerName="CamelHttpUri">
-        <constant>{{fcrepo3.uri}}/risearch</constant>
-      </setHeader>
-      <to uri="velocity:sparql/package.vm"/>
-      <to uri="log:shim.sparql.packaged"/>
-      <to uri="http4://dummy?authUsername=fedoraAdmin&amp;authPassword=fedoraAdmin"/>
-      <log message="SPARQL result: \n${body}"/>
-      <to uri="log:shim.sparql.result"/>
-      <removeHeader headerName="CamelHttpMethod"/>
-      <removeHeader headerName="CamelHttpChunked"/>
-      <removeHeader headerName="Content-Type"/>
-    </route>
-
-
+  <camelContext trace="true" xmlns="http://camel.apache.org/schema/blueprint" streamCache="true">
+    <package>edu.si.fcrepo3</package>
   </camelContext>
+  
+  <bean class="edu.si.fcrepo3.Triplify" id="triplify"/>
 
 </blueprint>

@@ -6,7 +6,6 @@ import static java.lang.Integer.MAX_VALUE;
 import static java.lang.System.getProperty;
 import static java.nio.file.FileSystems.getDefault;
 import static java.nio.file.Files.find;
-import static java.nio.file.Files.walk;
 import static java.util.Arrays.stream;
 import static java.util.Collections.list;
 import static java.util.stream.Collectors.toMap;
@@ -22,7 +21,8 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfi
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
-import static org.ops4j.pax.tinybundles.core.TinyBundles.*;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
+import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
 import static org.osgi.framework.Constants.BUNDLE_MANIFESTVERSION;
 import static org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME;
 import static org.osgi.framework.Constants.EXPORT_PACKAGE;
@@ -30,41 +30,23 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.net.URI;
 import java.net.URL;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.karaf.CamelKarafTestSupport;
-import org.apache.commons.io.IOUtils;
 import org.apache.jena.atlas.RuntimeIOException;
+import org.apache.jena.atlas.web.HttpException;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.riot.RDFDataMgr;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -76,15 +58,12 @@ import org.ops4j.pax.exam.karaf.options.KarafFeaturesOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.MavenUrlReference;
-import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
+import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
-import org.ops4j.store.Handle;
-import org.ops4j.store.Store;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +72,10 @@ import org.slf4j.LoggerFactory;
 public class ShimIT extends CamelKarafTestSupport {
 
     private static final Logger LOG = getLogger(ShimIT.class);
+
+    static {
+        System.setProperty("org.ops4j.pax.logging.DefaultServiceLog.level", "WARN");
+    }
 
     private static final String TEST_RESOURCE_BUNDLE_NAME = "edu.si.fcrepo3.testResources";
 
@@ -118,7 +101,7 @@ public class ShimIT extends CamelKarafTestSupport {
                                 unsafeIO(() -> new FileInputStream(path.toFile())));
             });
         } catch (IOException e) {
-            LOG.error("Failed to load test resources!",e);
+            LOG.error("Failed to load test resources!", e);
             throw new RuntimeIOException(e);
         }
         return testResources().add(streamBundle(testResourceBundle.build()).start());
@@ -134,12 +117,18 @@ public class ShimIT extends CamelKarafTestSupport {
     private static final String TOMCAT_URI = "http://localhost:" + System.getProperty("dynamic.test.port", "8080");
     protected static final String FEDORA_URI = TOMCAT_URI + "/trippi-sparql-fcrepo-webapp";
     protected static final String FUSEKI_URI = TOMCAT_URI + "/jena-fuseki-war/fedora3";
+    private static final String SLF4J_VERSION = "1.7.20";
+    private static final String LOGBACK_VERSION = "1.1.7";
 
     @Test
     public void testProvisioning() throws Exception {
         assertFeatureInstalled("camel-core", CAMEL_VERSION);
     }
 
+    /**
+     * @param url an URL to a test resource
+     * @return a path for the shim application that should return that resource
+     */
     private static String trimURLtoPath(URL url) {
         String tmp = url.getPath().replaceAll("_", ":");
         return tmp.substring(0, tmp.length() - 3);
@@ -164,14 +153,21 @@ public class ShimIT extends CamelKarafTestSupport {
 
         // take the test
         answers.forEach((path, answer) -> {
-            LOG.info("Testing: {}", path);
+            String url = "http://localhost:8181/shim" + path;
+            LOG.info("Testing: {}", url);
             LOG.info("Against answer:\n{}", answer);
-            Model result = loadModel("http://localhost:9191/shim" + path, NTRIPLES);
-            if (!result.isIsomorphicWith(answer)) {
-                log.error("Got result:\n{}", result);
-                log.error("when correct answer was:\n{}", answer);
+            try {
+                Model result = loadModel(url, NTRIPLES);
+                boolean pass = result.isIsomorphicWith(answer);
+                if (!pass) {
+                    LOG.error("Got result:\n{}", result);
+                    LOG.error("when correct answer was:\n{}", answer);
+                }
+                assertTrue("Got wrong triples for " + path + "!", pass);
+            } catch (HttpException e) {
+                LOG.error("Failed to retrieve answer because:\n", e.getResponse());
+                throw e;
             }
-            assertTrue("Got wrong triples for " + path + "!", result.isIsomorphicWith(answer));
         });
     }
 
@@ -182,6 +178,7 @@ public class ShimIT extends CamelKarafTestSupport {
 
     @Configuration
     public Option[] config() throws IOException {
+
         MavenUrlReference camelRepo = maven().groupId("org.apache.camel.karaf").artifactId("apache-camel")
                         .classifier("features").type("xml").version(CAMEL_VERSION);
 
@@ -209,7 +206,6 @@ public class ShimIT extends CamelKarafTestSupport {
                                                 .type("tar.gz").versionAsInProject())
                                 .karafVersion(KARAF_VERSION).name("Apache Karaf").useDeployFolder(false)
                                 .unpackDirectory(new File("target/paxexam/unpack/")),
-                logLevel(LogLevelOption.LogLevel.INFO),
 
                 // keep the folder so we can look inside when something fails
                 keepRuntimeFolder(),
@@ -219,30 +215,38 @@ public class ShimIT extends CamelKarafTestSupport {
                 // Disable the SSH port
                 configureConsole().ignoreRemoteShell().ignoreLocalConsole(),
 
-                // need to modify the jre.properties to export some com.sun packages that some features rely on
-                // KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new
-                // File("src/test/resources/jre.properties")),
-
                 vmOption("-Dfile.encoding=UTF-8"),
-
                 // Disable the Karaf shutdown port
-                editConfigurationFilePut("etc/custom.properties", "karaf.shutdown.port", "-1"),
-
+                // editConfigurationFilePut("etc/custom.properties", "karaf.shutdown.port", "-1"),
                 // Assign unique ports for Karaf
-                // editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port",
-                // Integer.toString(AvailablePortFinder.getNextAvailable())),
-                // editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort",
-                // Integer.toString(AvailablePortFinder.getNextAvailable())),
-                // editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort",
-                // Integer.toString(AvailablePortFinder.getNextAvailable())),
-
+                /*
+                 * editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port",
+                 * Integer.toString(AvailablePortFinder.getNextAvailable(8181))),
+                 * editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort",
+                 * Integer.toString(AvailablePortFinder.getNextAvailable(1099))),
+                 * editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort",
+                 * Integer.toString(AvailablePortFinder.getNextAvailable(44444))),
+                 */
                 // install junit
                 CoreOptions.junitBundles(),
 
                 CoreOptions.systemProperty("fcrepo3.uri").value(FEDORA_URI),
+                CoreOptions.systemProperty("build.directory").value(BUILD_DIRECTORY),
 
                 // install camel
                 camelTest, camelTestKaraf,
+                // proper logging
+                CoreOptions.systemProperty("karaf.log.console").value("ALL"),
+
+                replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg",
+                                new File(BUILD_DIRECTORY + "/org.ops4j.pax.logging.cfg")),
+
+                /*
+                 * replaceConfigurationFile("etc/startup.properties", new File(BUILD_DIRECTORY +
+                 * "/startup.properties")), mavenBundle("org.ops4j.pax.logging", "pax-logging-logback", "1.9.1"),
+                 * mavenBundle("ch.qos.logback", "logback-classic", "1.1.7"), mavenBundle("ch.qos.logback",
+                 * "logback-core", "1.1.7"), mavenBundle("org.slf4j", "slf4j-api", "1.7.20"),
+                 */
                 // tinybundles for test resources
                 mavenBundle("org.ops4j.pax.tinybundles", "tinybundles", "2.1.1"),
                 mavenBundle("biz.aQute.bnd", "bndlib", "2.4.0"),

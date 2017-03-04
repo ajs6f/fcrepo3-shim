@@ -1,4 +1,4 @@
-package edu.si.camel.fcrepo3;
+package edu.si.fcrepo3;
 
 import static org.apache.jena.graph.NodeFactory.createLiteral;
 import static org.apache.jena.graph.NodeFactory.createURI;
