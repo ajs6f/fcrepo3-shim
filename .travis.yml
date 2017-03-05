@@ -3,7 +3,7 @@ sudo: false
 before_install:
   - sed -i.bak -e 's|https://nexus.codehaus.org/snapshots/|https://oss.sonatype.org/content/repositories/codehaus-snapshots/|g' ~/.m2/settings.xml
 install: true
-script: mvn clean install
+script: mvn clean install -Dorg.apache.commons.logging.Log=no_commmons_logging_please
 jdk:
   - oraclejdk8
 env:
