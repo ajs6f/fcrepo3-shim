@@ -22,6 +22,12 @@
     <logger name="org.apache.http" additivity="false" level="WARN">
         <appender-ref ref="STDOUT"/>
     </logger>
+    <logger name="shaded.org.apache.http.wire" additivity="false" level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="shaded.org.apache.http.headers" additivity="false" level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </logger>
     <logger name="org.apache.http.wire" additivity="false" level="WARN">
         <appender-ref ref="STDOUT"/>
     </logger>
