@@ -53,11 +53,6 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>src/main/cfg/edu.si.fcrepo3-shim.cfg</file>
-                  <type>cfg</type>
-                  <classifier>configuration</classifier>
-                </artifact>
-                <artifact>
                   <file>${project.basedir}/src/main/resources/features.xml</file>
                   <type>xml</type>
                   <classifier>features</classifier>
@@ -67,7 +62,6 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
 </project>
