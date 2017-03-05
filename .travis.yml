@@ -2,8 +2,8 @@ language: java
 sudo: false
 before_install:
   - sed -i.bak -e 's|https://nexus.codehaus.org/snapshots/|https://oss.sonatype.org/content/repositories/codehaus-snapshots/|g' ~/.m2/settings.xml
-install: true
-script: mvn clean install
+install: mvn dependency:go-offline 
+script: mvn --no-snapshot-updates clean install
 jdk:
   - oraclejdk8
 env:
